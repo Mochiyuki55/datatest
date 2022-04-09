@@ -31,6 +31,9 @@ define('COPY_RIGHT', '&copy; Mochiyuki55');
 // Cookieネーム
 define('COOKIE_NAME','DATATEST');
 
+// ページカウント
+define('PAGE_COUNT', 10);
+
 // ソート
 define('ARRAY_SORT_BY',array(
     'publishedAt' => '投稿順',
