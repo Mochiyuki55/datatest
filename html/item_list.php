@@ -18,7 +18,7 @@ if (preg_match('/^[1-9][0-9]*$/', $_GET['page'])) {
 	$page = 1;
 }
 
-// ホワイトリスト照合
+// ホワイトリスト照合(セキュリティ関係)
 $s = 'column1';
 $o = 'asc';
 $sort_whitelist = array('column1' => 'column1', 'column2' => 'column2');
@@ -111,6 +111,7 @@ if ($_GET['q']) {
                 	$order = "desc";
                 }
                 ?>
+                <?php if($_GET['q']): ?>
                 <tr>
                     <?php foreach ($sort_whitelist as $column): ?>
                         <?php if ($column == $s): ?>
@@ -120,6 +121,12 @@ if ($_GET['q']) {
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </tr>
+                <?php else: ?>
+                <tr>
+                    <th>column1</th>
+                    <th>column2</th>
+                </tr>
+                <?php endif; ?>
 			</thead>
 			<?php foreach ($data_list as $data): ?>
 				<tr>
