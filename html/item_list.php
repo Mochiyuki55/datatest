@@ -88,6 +88,11 @@ if ($_GET['q']) {
     <div class="container">
         <h1><?php echo h($page_title); ?></h1>
 
+        <div class="row my-3">
+            <a class="btn btn-warning"  href="item_upload.php">アップロードする</a>　
+            <a class="btn btn-success" href="javascript:void(0);" onclick="var ok=confirm('全データをダウンロードします。宜しいですか?');if (ok) location.href='item_download.php'; return false;">データダウンロード</a>
+        </div>
+
         <div class="row">
             <div class="col-md-8">
                 <form class="form" action="" method="get">

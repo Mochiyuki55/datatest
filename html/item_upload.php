@@ -92,15 +92,15 @@ if ($_SERVER['REQUEST_METHOD'] = 'POST') {
             </div>
         <?php endif; ?>
         <?php if(!empty($err)): ?>
-            <div class="row alert alert-danger">
+            <div class="row alert alert-warning">
                 <p> <?php echo $err['upload_file']; ?></p>
             </div>
         <?php endif; ?>
 
         <form method="POST" enctype="multipart/form-data">
         	<input type="hidden" name="MAX_FILE_SIZE" value="1048576" />
-        	<label>CSVファイルを指定して下さい。</label>
-        	<input type="file" name="upload_file" />
+        	<label>CSVファイルを指定して下さい。</label><br>
+        	<input type="file" name="upload_file" /> <br>
         	<input type="submit" value="アップロード">
         </form>
 
