@@ -8,12 +8,12 @@ session_start();
 $pdo = connectDb();
 
 // 自動ログイン情報クリア
-if (isset($_COOKIE['CONTENTSMAKER'])) {
+if (isset($_COOKIE['DATASHARING'])) {
 
-	$auto_login_key = $_COOKIE['CONTENTSMAKER'];
+	$auto_login_key = $_COOKIE['DATASHARING'];
 
 	// Cookie情報をクリア
-	setcookie('CONTENTSMAKER', '', time()-86400, COOKIE_PATH);
+	setcookie('DATASHARING', '', time()-86400, COOKIE_PATH);
 
 	// DB情報をクリア
 	$sql = "DELETE FROM auto_login WHERE c_key = :c_key";
@@ -26,8 +26,8 @@ unset($pdo);
 // ログアウト処理
 $_SESSION = array();
 
-if (isset($_COOKIE[session_name()])) {
-	setcookie(session_name(), '', time()-86400, COOKIE_PATH);
+if (isset($_COOKIE['DATASHARING'])) {
+	setcookie('DATASHARING', '', time()-86400, COOKIE_PATH);
 }
 
 session_destroy();

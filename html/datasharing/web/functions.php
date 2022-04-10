@@ -1,6 +1,5 @@
 <?php
 require_once('config.php');
-
 // データベースに接続する
 function connectDb() {
   $host = HOST_NAME; //データベースサーバ名

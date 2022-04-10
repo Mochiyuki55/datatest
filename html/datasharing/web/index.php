@@ -6,11 +6,11 @@ require_once('functions.php');
 $page_title = 'データリスト';
 
 // 認証処理
-// session_start();
-// if (!isset($_SESSION['USER'])) {
-//     header('Location: '.SITE_URL.'login.php');
-//     exit;
-// }
+session_start();
+if (!isset($_SESSION['USER'])) {
+    header('Location: '.SITE_URL.'login.php');
+    exit;
+}
 
 $user = $_SESSION['USER'];
 $pdo = connectDb();
@@ -146,6 +146,8 @@ unset($pdo);
         <h1><?php echo h($page_title); ?></h1>
         <p>登録されているデータリストです。</p>
 
+        <?php echo print_r($_SESSION['USER']); ?>
+        
         <div class="row">
             <div class="col-md-6">
                 <form class="form" action="" method="get">

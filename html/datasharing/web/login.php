@@ -8,10 +8,20 @@ $page_title = 'ログイン画面';
 session_start();
 $pdo = connectDb();
 
+// ユーザーリストを配列に取得
+$user_array = array('99' => 'ユーザー名');
+$sql = "SELECT * FROM user";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+foreach ($stmt->fetchall(PDO::FETCH_ASSOC) as $row) {
+    $user_array[$row['user_name']] = $row['user_name'];
+    // array_push($user_array, $value['user_name']);
+}
+
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   // ログイン画面を表示する前にまずCookieがあるかをチェックする。
-  if(isset($_COOKIE[COOKIE_NAME])){ // Cookieがある場合
-    $auto_login_key = $_COOKIE[COOKIE_NAME];
+  if(isset($_COOKIE['DATASHARING'])){ // Cookieがある場合
+    $auto_login_key = $_COOKIE['DATASHARING'];
 
     $sql = "SELECT * FROM auto_login WHERE c_key = :c_key AND expire >= :expire LIMIT 1";
     $stmt = $pdo->prepare($sql);
@@ -38,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   checkToken(); // CSRF 対策
 
   // 入力データを変数に格納する
-  $user_email = $_POST['user_email'];         // メールアドレス
+  $user_name = $_POST['user_name'];         // メールアドレス
   $user_password = $_POST['user_password'];   // パスワード
   $auto_login = $_POST['auto_login'];         // 自動ログイン
 
@@ -48,19 +58,17 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   // エラーチェック
   $err = array();
 
-  // [メールアドレス]未入力チェック
-  if ($user_email == '') {
-      $err['user_email'] = 'メールアドレスを入力して下さい。';
-  } else {
-      // [メールアドレス]形式チェック
-      if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
-          $err['user_email'] = 'メールアドレスが不正です。';
-      } else {
-          // ログイン認証
-          $user = getUserByEmail($user_email, $pdo);
-          if (!$user || !password_verify($user_password, $user['user_password'])) {
-              $err['user_password'] = 'パスワードが正しくありません。';
-          }
+  // [ユーザー名]未入力チェック
+  if ($user_name == '99') {
+      $err['user_name'] = 'ユーザーを選択して下さい。';
+  }else{
+      // パスワード不正チェック
+      $sql = "SELECT * FROM user WHERE user_name = :user_name AND user_password = :user_password LIMIT 1";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute(array(":user_name" => $user_name, ":user_password" => $user_password));
+      $user = $stmt->fetch();
+      if(!$user){
+          $err['user_name'] = 'パスワードが間違っています。';
       }
   }
   // [パスワード]未入力チェック
@@ -68,20 +76,27 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
       $err['user_password'] = 'パスワードを入力して下さい。';
   }
 
+
     // もし$err配列に何もエラーメッセージが保存されていなかったら
     if (empty($err)) {
       // セッション変数にログイン状態を書き込む前に、セッションハイジャック対策
       session_regenerate_id(true);
 
+      //
+      $sql = "SELECT * FROM user WHERE user_name = :user_name AND user_password = :user_password LIMIT 1";
+      $stmt = $pdo->prepare($sql);
+      $stmt->execute(array(":user_name" => $user_name, ":user_password" => $user_password));
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
       // ログインに成功したのでセッションにユーザデータを保存する
       $_SESSION['USER'] = $user;
 
       // 自動ログイン情報を一度クリアする。
-      if (isset($_COOKIE['CONTENTSMAKER'])) {
-          $auto_login_key = $_COOKIE['CONTENTSMAKER'];
+      if (isset($_COOKIE['DATASHARING'])) {
+          $auto_login_key = $_COOKIE['DATASHARING'];
 
           // Cookie情報をクリア
-          setcookie('CONTENTSMAKER', '', time()-86400, COOKIE_PATH);
+          setcookie('DATASHARING', '', time()-86400, COOKIE_PATH);
 
           // DB情報をクリア
           $sql = "DELETE FROM auto_login WHERE c_key = :c_key";
@@ -96,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                   $auto_login_key = sha1(uniqid(mt_rand(), true));
 
                   // Cookie登録処理
-                  setcookie('CONTENTSMAKER', $auto_login_key, time()+3600*24*365, COOKIE_PATH);
+                  setcookie('DATASHARING', $auto_login_key, time()+3600*24*365, COOKIE_PATH);
                   // DB登録処理
                   $sql = "INSERT INTO auto_login (user_id, c_key, expire, created_at, updated_at)
                   VALUES (:user_id, :c_key, :expire, now(), now())";
@@ -123,16 +138,21 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
         <h1 class="mt-5 font-weight-bold text-white"> <?php echo TITLE; ?> </h1>
         <h2 class="text-light">みんなのデータをブラウザで共有</h2>
 
-        <div class="col-md-8 offset-2">
-
             <form class="form" method="POST" >
               <div class="form-group">
-                <?php echo arrayToSelect('user_list',ARRAY_USER_LIST,'');?>
-                <span class="text-danger"><?php echo h($err['user_email']); ?></span>
+
+                <select class="form-control" name="user_name">
+                    <?php foreach ($user_array as $name): ?>
+                        <option value="<?php echo h($name); ?>"><?php echo h($name); ?></option>
+                    <?php endforeach; ?>
+
+                </select>
+
+                <span class="text-danger"><?php echo h($err['user_name']); ?></span>
               </div>
 
               <div class="form-group">
-                <input type="password" class="form-control" name="user_password" value="" placeholder="パスワード" required>
+                <input type="password" class="form-control" name="user_password" value="" placeholder="パスワード">
                 <span class="text-danger"><?php echo h($err['user_password']); ?></span>
               </div>
 
@@ -153,7 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
             </form>
 
-        </div>
     </div><!-- container -->
 
     <?php include 'layouts/footer.php'; ?>

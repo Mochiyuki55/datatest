@@ -28,16 +28,13 @@ define('TITLE', 'DataSharing');
 // コピーライト
 define('COPY_RIGHT', '&copy; Mochiyuki55');
 
-// Cookieネーム
-define('COOKIE_NAME','DATASHARING');
-
 // ページカウント
 define('PAGE_COUNT', 10);
 
 // ソート
 define('ARRAY_USER_LIST',array(
-    '99' => 'ユーザー名',
-    '1' => 'aaaa',
+    '0' => 'ユーザー名',
+    '1' => 'mochiyuki',
     '2' => 'bbbb',
     '3' => 'cccc',
     '4' => 'dddd',
