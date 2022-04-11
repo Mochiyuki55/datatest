@@ -15,24 +15,6 @@ if (!isset($_SESSION['USER'])) {
 $user = $_SESSION['USER'];
 $pdo = connectDb();
 
-// 画面を最初に読み込んだとき
-if(!$_GET['q'] && !$_GET['s'] && !$_GET['o']){
-    // ページネーション処理
-    $page = 1;
-    $offset = PAGE_COUNT * ($page -1);
-
-    // データリストを取得する
-    $data_list = array();
-    $sql = "select * from item limit :offset, :count";
-    $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-    $stmt->bindValue(':count', PAGE_COUNT, PDO::PARAM_INT);
-    $stmt->execute();
-    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        array_push($data_list,$row);
-    }
-}
-
 // 検索、ページネーション、ソートのパラメータがGETされた場合
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   setToken(); // CSRF 対策
@@ -52,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   	$page = 1;
   }
   $offset = PAGE_COUNT * ($page -1);
-
 
   // ソートに関するホワイトリスト照合(セキュリティ関係)
   $s = $_GET['s']; // どのカラムのソートなのか
@@ -147,7 +128,7 @@ unset($pdo);
         <p>登録されているデータリストです。</p>
 
         <?php echo print_r($_SESSION['USER']); ?>
-        
+
         <div class="row">
             <div class="col-md-6">
                 <form class="form" action="" method="get">
@@ -218,7 +199,8 @@ unset($pdo);
                     <td><?php echo h($data['column8']);?></td>
                     <td><?php echo h($data['column9']);?></td>
                     <td><?php echo h($data['column10']);?></td>
-					<td><a href="./item_edit.php?id=<?php echo h($data['id']); ?>">編集</a></td>
+					<td><a href="./item_edit.php?id=<?php echo h($data['id']); ?>" class="btn btn-secondary">編集</a>　
+                        <a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?'); if (ok) location.href='item_delete.php?id=<?php echo h($data['id']); ?>'; return false;">削除</a>
 				</tr>
 			<?php endforeach;?>
 		</table>

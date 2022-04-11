@@ -4,7 +4,13 @@ require_once('functions.php');
 
 // レイアウト関連の変数
 $page_title = 'データ一括登録';
-
+// 認証処理
+session_start();
+if (!isset($_SESSION['USER'])) {
+    header('Location: '.SITE_URL.'login.php');
+    exit;
+}
+$user = $_SESSION['USER'];
 $pdo = connectDB();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -127,6 +133,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <label>CSVファイルを指定して下さい。</label> <br>
                     <input type="file" name="upload_file" />
                 </div>
+                <div class="form-group">
+                    <input type="checkbox" name="csv_header" value="">
+                    １行目をヘッダ行として処理する
+                </div>
+
+                <!-- CSRF対策 -->
+                <input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 
                 <div class="form-group">
                     <input class="btn btn-primary" type="submit" value="アップロード">

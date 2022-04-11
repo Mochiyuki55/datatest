@@ -160,14 +160,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                 <label for="auto_login">
                   <input id="auto_login" type="checkbox" name="auto_login"> 次回から自動でログイン
                 </label>
-
-               <p><a href="generate.php">パスワードを忘れた場合はこちら</a></p>
               </div>
 
               <div class="form-group">
                 <input type="submit" value="ログイン" class="btn btn-primary btn-block">
               </div>
-
+                            
               <!-- CSRF対策：index.phpがPOSTされて遷移してきた場合、次のphpにPOSTする際はトークンを引き継ぐ必要がある-->
               <input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />
 
