@@ -8,13 +8,17 @@
             <li class="nav-item">
                 <a class="nav-link" href="./index.php">データリスト</a>
             </li>
+
             <!-- 管理者権限のユーザーのみ表示 -->
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="./howto.php">ユーザー情報</a>
+            <?php if($user['user_auth'] == 1): ?>
+            <li class="nav-item">
+                <a class="nav-link" href="./user_list.php">ユーザー一覧</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="./setting.php">操作ログ</a>
-            </li> -->
+                <a class="nav-link" href="./history.php">操作ログ</a>
+            </li>
+            <?php endif; ?>
+
             <li class="nav-item">
                 <a class="nav-link" href="./logout.php">ログアウト</a>
             </li>
