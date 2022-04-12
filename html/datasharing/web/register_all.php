@@ -51,6 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // CSVファイルをクローズします。
         fclose($temp);
 
+        // ヘッダー削除処理
+        if(isset($_POST['csv_header'])){
+            // 一番最初の行（ヘッダー）
+            unset($data_array[0]);
+        }
         // カラムが複数の場合
         if (count($data_array) >= 2) {
             for ($i = 0; $i < count($data_array); $i++) {
@@ -134,8 +139,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="file" name="upload_file" />
                 </div>
                 <div class="form-group">
-                    <input type="checkbox" name="csv_header" value="">
-                    １行目をヘッダ行として処理する
+                    <input id= 'input' type="checkbox" name="csv_header" value="1">
+                    <label for="input">１行目をヘッダ行として処理する</label>
+
                 </div>
 
                 <!-- CSRF対策 -->
@@ -147,7 +153,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
 
         </div>
-
+        <div class="">
+            <?php echo print_r($data_array); ?>
+        </div>
     </div>
     <?php include 'layouts/footer.php'; ?>
 
