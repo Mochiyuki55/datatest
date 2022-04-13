@@ -12,7 +12,7 @@
             <!-- 管理者権限のユーザーのみ表示 -->
             <?php if($user['user_auth'] == 1): ?>
             <li class="nav-item">
-                <a class="nav-link" href="./user_list.php">ユーザー一覧</a>
+                <a class="nav-link" href="./user_list.php?s=user_name&o=desc">ユーザー一覧</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="./history.php">操作ログ</a>
