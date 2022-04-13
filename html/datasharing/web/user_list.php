@@ -120,7 +120,7 @@ unset($pdo);
                     <td><?php echo h($user['created_at']);?></td>
 
 					<td><a href="./user_edit.php?id=<?php echo h($user['id']); ?>" class="btn btn-secondary">変更</a>　
-                        <a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?'); if (ok) location.href='item_delete.php?id=<?php echo h($data['id']); ?>'; return false;">削除</a>
+                        <a href="javascript:void(0);" class="btn btn-danger" onclick="var ok=confirm('削除しても宜しいですか?'); if (ok) location.href='user_delete.php?id=<?php echo h($user['id']); ?>'; return false;">削除</a>
 				</tr>
 			<?php endforeach;?>
 

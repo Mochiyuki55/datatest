@@ -3,7 +3,7 @@ require_once('config.php');
 require_once('functions.php');
 
 // レイアウト関連の変数
-$page_title = 'ユーザー登録';
+$page_title = 'ユーザー情報登録';
 // 認証処理
 session_start();
 if (!isset($_SESSION['USER'])) {
@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     $complete_msg = '';
 
+    // 入力情報チェック
     $user_name = $_POST['user_name'];
     $user_password = $_POST['user_password'];
     $user_auth = $_POST['user_auth'];
@@ -104,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
                         <div class="row mt-2 text-light">
                             <div class="col form-group <?php if ($err['user_auth'] != '') echo 'has-error'; ?>">
-                                <label for="">権限</label>
+                                <label for="">アクセス権限</label>
                                 <select class="form-control" name="user_auth">
                                     <option value="0">一般</option>
                                     <option value="1">管理者</option>
@@ -121,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                         <input type="submit" value="登録" class="btn btn-primary btn-block">
                     </div>
 
-                    <a class="btn btn-secondary" href="./index.php">戻る</a>　
+                    <a class="btn btn-secondary" href="./user_list.php?s=user_name&o=desc">戻る</a>　
 
                 </form>
             </div>
