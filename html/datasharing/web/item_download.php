@@ -1,6 +1,15 @@
 <?php
 require_once('config.php');
 require_once('functions.php');
+session_start();
+
+// ログインチェック
+if (!isset($_SESSION['USER'])) {
+  header('Location: '.SITE_URL.'login.php');
+  exit;
+}
+// セッションからユーザ情報を取得
+$user = $_SESSION['USER'];
 
 $pdo = connectDB();
 $items = array();
@@ -11,6 +20,16 @@ $stmt = $pdo->query($sql);
 foreach ($stmt->fetchAll() as $row) {
     array_push($items, $row);
 }
+
+// 操作ログを記録
+$action = $user['user_name'].'がデータをエクスポートしました。';
+$sql = 'INSERT INTO history
+        (user_id, action, created_at, updated_at)
+        VALUES
+        (:user_id, :action, now(), now())';
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
 
 // CSVデータ書き出し用の一時ファイルを準備
 $temp = tmpfile();
@@ -27,6 +46,7 @@ foreach ($items as $key => $item) {
     // 作成した配列をCSV形式で一時ファイルに出力
     fputcsv($temp, $array);
 }
+
 
 unset($pdo);
 

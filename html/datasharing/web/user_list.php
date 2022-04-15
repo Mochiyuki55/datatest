@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   $sort_whitelist = array('user_name' => 'user_name',
                           'user_auth' => 'user_auth',
                           'created_at' => 'created_at');
-  $sort_safe = isset($sort_whitelist[$s]) ? $sort_whitelist[$s] : $sort_whitelist['ユーザー'];
+  $sort_safe = isset($sort_whitelist[$s]) ? $sort_whitelist[$s] : $sort_whitelist['user_name'];
   $order_whitelist = array('asc' => 'asc', 'desc' => 'desc');
   $order_safe = isset($order_whitelist[$o]) ? $order_whitelist[$o] : $order_whitelist['asc'];
 
@@ -52,6 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
       array_push($user_array,$row);
   }
 
+  // 総データ件数を取得
+  $sql2 = "select count(*) from user";
+  $stmt2 = $pdo->prepare($sql2);
+  $stmt2->execute();
+  $total = $stmt2->fetchColumn();
+
+  $total_page = ceil($total / PAGE_COUNT);
 
 } else {
   checkToken(); // CSRF 対策
@@ -98,20 +105,29 @@ unset($pdo);
                     $arrow_icon = "glyphicon-arrow-up";
                     $order = "desc";
                 }
+                $thead_array = array('user_name' => 'ユーザー名', 'user_auth' => '権限', 'created_at' => '登録日時');
                 ?>
 
+                <?php if($_GET['o'] || $_GET['s']): ?>
                 <tr>
                     <?php foreach ($sort_whitelist as $column): ?>
                         <!-- ソートに選択されているカラムについて -->
                         <?php if ($column == $s): ?>
-                            <th><a href="?s=<?php echo h($column); ?>&o=<?php echo h($order); ?>"><?php echo h($column); ?><span class="glyphicon <?php echo h($arrow_icon); ?>"></span></a></th>
+                            <th><a href="?s=<?php echo h($column); ?>&o=<?php echo h($order); ?>"><?php echo h($thead_array[$column]); ?><span class="glyphicon <?php echo h($arrow_icon); ?>"></span></a></th>
                         <!-- ソートに選択されていないカラムについて -->
                         <?php else: ?>
-                            <th><a href="?s=<?php echo h($column); ?>&o=<?php echo h($order); ?>"><?php echo h($column); ?></a></th>
+                            <th><a href="?s=<?php echo h($column); ?>&o=<?php echo h($order); ?>"><?php echo h($thead_array[$column]); ?></a></th>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </tr>
-
+                <?php else: ?>
+                <!-- クエリがなければ普通に表示 -->
+                <tr>
+                    <th>ユーザー名</th>
+                    <th>権限</th>
+                    <th>登録日時</th>
+                </tr>
+                <?php endif; ?>
 			</thead>
 			<?php foreach ($user_array as $user): ?>
 				<tr>
@@ -131,7 +147,7 @@ unset($pdo);
                     <ul class="pagination">
                         <?php if ($page > 1): ?>
                           <!-- ページパラメーターを指定し、前のページに戻れるようにする -->
-                          <li class="page-item"><a class="page-link" href="?page=<?php echo $page-1; ?>&q=<?php echo h($search_query); ?>">&laquo;</a></li>
+                          <li class="page-item"><a class="page-link" href="?page=<?php echo $page-1; ?>">&laquo;</a></li>
                         <?php else: ?>
                           <!-- 1ページ目を表示している場合は非アクティブ（class="disabled"）にする -->
                           <li class="disabled page-item"><a class="page-link" href="#">&laquo;</a></li>
@@ -144,13 +160,13 @@ unset($pdo);
                               <li class="active page-item"><a class="page-link" href="#"><?php echo $i; ?></a></li>
                             <?php else: ?>
                               <!-- ページパラメーターを指定し、指定ページに遷移出来るようにする -->
-                              <li class="page-item"><a class="page-link" href="?page=<?php echo $i; ?>&q=<?php echo h($search_query); ?>"><?php echo $i; ?></a></li>
+                              <li class="page-item"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
                             <?php endif; ?>
                         <?php endfor; ?>
 
                         <?php if ($page < $total_page): ?>
                           <!-- ページパラメーターを指定し、次のページに進めるようにする -->
-                          <li class="page-item"><a class="page-link" href="?page=<?php echo $page+1; ?>&q=<?php echo h($search_query); ?>">&raquo;</a></li>
+                          <li class="page-item"><a class="page-link" href="?page=<?php echo $page+1; ?>">&raquo;</a></li>
                         <?php else: ?>
                           <!-- 最終ページを表示している場合は非アクティブ（class="disabled"）にする -->
                           <li class="disabled page-item"><a class="page-link" href="#">&raquo;</a></li>

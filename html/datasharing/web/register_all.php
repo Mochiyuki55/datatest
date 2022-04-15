@@ -102,6 +102,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->execute($params);
                 $result = $stmt->errorInfo();
             }
+
+            // 操作ログを記録
+            $action = $user['user_name'].'がデータを一括登録しました。';
+            $sql = 'INSERT INTO history
+                    (user_id, action, created_at, updated_at)
+                    VALUES
+                    (:user_id, :action, now(), now())';
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
+
             // 完了メッセージを設定
            $complete_msg = count($data_array)."件のデータが登録されました。";
         }

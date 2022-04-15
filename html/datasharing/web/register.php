@@ -47,6 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                         ":column9" => $item_column9, ':column10' => $item_column10,
                         "created_by" => $user['id'], "updated_by" => $user['id']));
 
+    // 操作ログを記録
+    $action = $user['user_name'].'がデータを新規登録しました。';
+    $sql = 'INSERT INTO history
+            (user_id, action, created_at, updated_at)
+            VALUES
+            (:user_id, :action, now(), now())';
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
+
     header('Location:'.SITE_URL.'index.php');
 }
 ?>

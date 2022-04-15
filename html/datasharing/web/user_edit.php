@@ -73,6 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                                 ":user_auth" => $user_auth, ':id' => $id));
             // $result = $stmt->errorInfo();
 
+            // 操作ログを記録
+            $action = $user['user_name'].'がユーザー「'.$user_name.'」の情報を編集しました。';
+            $sql = 'INSERT INTO history
+                    (user_id, action, created_at, updated_at)
+                    VALUES
+                    (:user_id, :action, now(), now())';
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
+
             $complete_msg =  'ユーザー変更が完了しました。';
         }
 }

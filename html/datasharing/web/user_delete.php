@@ -16,10 +16,23 @@ $user = $_SESSION['USER'];
 $pdo = connectDb();
 $id = $_GET['id'];
 
+$sql = "SELECT * FROM user WHERE id = :id LIMIT 1";
+$stmt = $pdo->prepare($sql);
+$stmt->execute(array(":id" => $id));
+$user_delete = $stmt->fetch();
+
 $sql = "DELETE FROM user WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(array(":id" => $id));
 
+// 操作ログを記録
+$action = $user['user_name'].'がユーザー「'.$user_delete['user_name'].'」の情報を削除しました。';
+$sql = 'INSERT INTO history
+        (user_id, action, created_at, updated_at)
+        VALUES
+        (:user_id, :action, now(), now())';
+$stmt = $pdo->prepare($sql);
+$stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
 
 unset($pdo);
 

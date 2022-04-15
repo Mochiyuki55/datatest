@@ -20,6 +20,15 @@ $sql = "DELETE FROM item WHERE id = :id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute(array(":id" => $id));
 
+// 操作ログを記録
+$action = $user['user_name'].'がデータ「'.$id.'」を削除しました。';
+$sql = 'INSERT INTO history
+        (user_id, action, created_at, updated_at)
+        VALUES
+        (:user_id, :action, now(), now())';
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute(array(":user_id" => $user['id'], ':action' => $action));
 
 unset($pdo);
 

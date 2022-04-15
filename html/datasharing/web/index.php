@@ -127,8 +127,6 @@ unset($pdo);
         <h1><?php echo h($page_title); ?></h1>
         <p>登録されているデータリストです。</p>
 
-        <?php echo print_r($_SESSION['USER']); ?>
-
         <div class="row">
             <div class="col-md-6">
                 <form class="form" action="" method="get">
