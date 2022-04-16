@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     $user_name = $_POST['user_name'];
     $user_password = $_POST['user_password'];
     $user_auth = $_POST['user_auth'];
-
+    $user_item_num = $_POST['user_item_num'];
 
     // 入力チェックを行う。
     $err = array();
@@ -54,11 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
     if (empty($err)) {
         $sql = 'INSERT INTO user
-                (user_name, user_password, user_auth, created_at, updated_at)
+                (user_name, user_password, user_auth, item_num, created_at, updated_at)
                 VALUES
-                (:user_name, :user_password, :user_auth, now(), now())';
+                (:user_name, :user_password, :user_auth, :item_num, now(), now())';
         $stmt = $pdo->prepare($sql);
-        $stmt->execute(array(":user_name" => $user_name, ':user_password' => $user_password, ":user_auth" => $user_auth));
+        $stmt->execute(array(":user_name" => $user_name, ':user_password' => $user_password,
+                            ":user_auth" => $user_auth, ':item_num' => $user_item_num));
         // $result = $stmt->errorInfo();
 
         // 操作ログを記録
@@ -123,6 +124,13 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                             </div>
                         </div>
 
+                        <div class="row mt-2 text-light">
+                            <div class="col form-group <?php if ($err['user_item_num'] != '') echo 'has-error'; ?>">
+                                <label for="">表示件数</label>
+                                <?php echo arrayToSelect('user_item_num', ARRAY_ITEM_NUM, '10'); ?>
+                                <span class="text-danger"><?php echo h($err['user_item_num']); ?></span>
+                            </div>
+                        </div>
 
                     <!-- CSRF対策 -->
                     <input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />

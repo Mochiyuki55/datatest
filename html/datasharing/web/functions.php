@@ -78,16 +78,6 @@ function getUserbyUserId($user_id, $pdo) {
     return $user ? $user : false;
 }
 
-// ユーザIDからnewsを検索する
-function getNewsbyUserId($user_id, $pdo) {
-    $sql = "SELECT * FROM news WHERE user_id = :user_id LIMIT 1";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute(array(":user_id" => $user_id));
-    $news = $stmt->fetch();
-
-    return $news ? $news : false;
-}
-
 // ランダム文字列生成 (英数字)
 function makeRandStr($length) {
     $str = array_merge(range('a', 'z'), range('0', '9'), range('A', 'Z'));

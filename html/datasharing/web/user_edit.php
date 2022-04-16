@@ -11,8 +11,8 @@ if (!isset($_SESSION['USER'])) {
     header('Location: '.SITE_URL.'login.php');
     exit;
 }
-$user = $_SESSION['USER'];
 
+$user = $_SESSION['USER'];
 $pdo = connectDB();
 $id = $_GET['id'];
 
@@ -23,11 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     $sql = 'SELECT * FROM user WHERE id = :id LIMIT 1';
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array(':id' => $id));
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $user2 = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $user_name = $user['user_name'];
-    $user_password = $user['user_password'];
-    $user_auth = $user['user_auth'];
+    $user_name = $user2['user_name'];
+    $user_password = $user2['user_password'];
+    $user_auth = $user2['user_auth'];
+    $user_item_num = $user2['item_num'];
 
 } else {
     // CSRF対策
@@ -40,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
         $user_name = $_POST['user_name'];
         $user_password = $_POST['user_password'];
         $user_auth = $_POST['user_auth'];
-
+        $user_item_num = $_POST['user_item_num'];
 
         // 入力チェックを行う。
         $err = array();
@@ -66,11 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
         if (empty($err)) {
             $sql = 'UPDATE user
                     SET user_name = :user_name ,user_password = :user_password,
-                    user_auth = :user_auth, updated_at = now()
+                    user_auth = :user_auth, item_num = :item_num, updated_at = now()
                     where id = :id';
             $stmt = $pdo->prepare($sql);
             $stmt->execute(array(":user_name" => $user_name, ':user_password' => $user_password,
-                                ":user_auth" => $user_auth, ':id' => $id));
+                                ":user_auth" => $user_auth, 'item_num' => $user_item_num, ':id' => $id));
             // $result = $stmt->errorInfo();
 
             // 操作ログを記録
@@ -135,6 +136,20 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
                             </div>
                         </div>
 
+                        <div class="row mt-2 text-light">
+                            <div class="col form-group <?php if ($err['user_item_num'] != '') echo 'has-error'; ?>">
+                                <label for="">表示件数</label>
+                                <select class="form-control" name="user_item_num">
+                                    <option value="5" <?php if($user_item_num == 5){echo "selected";} ?>>5件</option>
+                                    <option value="10" <?php if($user_item_num == 10){echo  "selected";} ?>>10件</option>
+                                    <option value="15" <?php if($user_item_num == 15){echo  "selected";} ?>>15件</option>
+                                    <option value="20" <?php if($user_item_num == 20){echo  "selected";} ?>>20件</option>
+                                    <option value="25" <?php if($user_item_num == 25){echo  "selected";} ?>>25件</option>
+                                    <option value="30" <?php if($user_item_num == 30){echo  "selected";} ?>>30件</option>
+                                </select>
+                                <span class="text-danger"><?php echo h($err['user_item_num']); ?></span>
+                            </div>
+                        </div>
 
                     <!-- CSRF対策 -->
                     <input type="hidden" name="token" value="<?php echo h($_SESSION['sstoken']); ?>" />

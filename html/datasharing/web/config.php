@@ -32,12 +32,13 @@ define('COPY_RIGHT', '&copy; Mochiyuki55');
 define('PAGE_COUNT', 10);
 
 // ソート
-define('ARRAY_USER_LIST',array(
-    '0' => 'ユーザー名',
-    '1' => 'mochiyuki',
-    '2' => 'bbbb',
-    '3' => 'cccc',
-    '4' => 'dddd',
+define('ARRAY_ITEM_NUM',array(
+    '5' => '5',
+    '10' => '10',
+    '15' => '15',
+    '20' => '20',
+    '25' => '25',
+    '30' => '30',
 ));
 
 ?>

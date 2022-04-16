@@ -3,7 +3,7 @@ require_once('config.php');
 require_once('functions.php');
 
 // レイアウト関連の変数
-$page_title = 'バージョン管理';
+$page_title = 'バージョン';
 
 // 認証処理
 session_start();

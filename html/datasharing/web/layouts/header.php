@@ -20,6 +20,10 @@
             <?php endif; ?>
 
             <li class="nav-item">
+                <a class="nav-link" href="./user_setting.php">個人設定</a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="./version.php">バージョン</a>
             </li>
 

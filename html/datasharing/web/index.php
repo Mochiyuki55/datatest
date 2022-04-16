@@ -32,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   	// 数値以外のパラメーターが渡されたら強制的に1にする
   	$page = 1;
   }
-  $offset = PAGE_COUNT * ($page -1);
+  $user = getUserbyUserId($user['id'], $pdo);
+  $offset = $user['item_num'] * ($page -1);
 
   // ソートに関するホワイトリスト照合(セキュリティ関係)
   $s = $_GET['s']; // どのカラムのソートなのか
@@ -69,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   $stmt = $pdo->prepare($sql);
   $stmt->bindValue(':query', '%'.$search_query.'%', PDO::PARAM_STR);
   $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-  $stmt->bindValue(':count', PAGE_COUNT, PDO::PARAM_INT);
+  $stmt->bindValue(':count', $user['item_num'], PDO::PARAM_INT);
   $stmt->execute();
   foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
       array_push($data_list,$row);
@@ -92,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   $stmt2->bindValue(':query', '%'.$search_query.'%', PDO::PARAM_STR);
   $stmt2->execute();
   $total = $stmt2->fetchColumn();
-  $total_page = ceil($total / PAGE_COUNT);
+  $total_page = ceil($total / $user['item_num']);
 
 
 } else {
