@@ -1,7 +1,6 @@
 <?php
 require_once('config.php');
 require_once('functions.php');
-
 // レイアウト関連の変数
 $page_title = 'データリスト';
 
@@ -93,7 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
   $stmt2->bindValue(':query', '%'.$search_query.'%', PDO::PARAM_STR);
   $stmt2->execute();
   $total = $stmt2->fetchColumn();
-
   $total_page = ceil($total / PAGE_COUNT);
 
 

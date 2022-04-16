@@ -20,6 +20,10 @@
             <?php endif; ?>
 
             <li class="nav-item">
+                <a class="nav-link" href="./version.php">バージョン</a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="./logout.php">ログアウト</a>
             </li>
         </ul>
